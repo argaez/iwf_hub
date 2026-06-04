@@ -1,0 +1,1 @@
+class EquipmentEventPolicy < ApplicationPolicy; end

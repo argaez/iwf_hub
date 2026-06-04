@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_212923) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_25_212928) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -81,12 +81,73 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_212923) do
     t.index ["equipment_id"], name: "index_equipment_events_on_equipment_id"
   end
 
+  create_table "extension_ranges", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "label", null: false
+    t.integer "range_end", null: false
+    t.integer "range_start", null: false
+    t.bigint "tenant_id"
+    t.datetime "updated_at", null: false
+    t.index ["tenant_id"], name: "index_extension_ranges_on_tenant_id"
+  end
+
+  create_table "extensions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "notes"
+    t.integer "number", null: false
+    t.bigint "tenant_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["tenant_id", "number"], name: "index_extensions_on_tenant_id_and_number", unique: true
+    t.index ["tenant_id"], name: "index_extensions_on_tenant_id"
+    t.index ["user_id"], name: "index_extensions_on_user_id"
+  end
+
   create_table "locations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
     t.bigint "tenant_id"
     t.datetime "updated_at", null: false
     t.index ["tenant_id"], name: "index_locations_on_tenant_id"
+  end
+
+  create_table "onboarding_requests", force: :cascade do |t|
+    t.json "applications", default: []
+    t.string "applications_other"
+    t.boolean "brand_new_phone", default: false
+    t.datetime "created_at", null: false
+    t.json "distribution_lists", default: []
+    t.boolean "existing_phone", default: false
+    t.bigint "extension_id"
+    t.boolean "new_computer", default: false
+    t.boolean "new_remote_user", default: false
+    t.text "notes"
+    t.string "pc_asset_tag"
+    t.string "pc_name_or_previous_owner"
+    t.string "previous_remote_user"
+    t.boolean "remote_access_needed", default: false
+    t.string "remote_department"
+    t.date "request_date", null: false
+    t.date "start_date"
+    t.bigint "tenant_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["extension_id"], name: "index_onboarding_requests_on_extension_id"
+    t.index ["tenant_id"], name: "index_onboarding_requests_on_tenant_id"
+    t.index ["user_id"], name: "index_onboarding_requests_on_user_id"
+  end
+
+  create_table "permissions", force: :cascade do |t|
+    t.boolean "can_create", default: false, null: false
+    t.boolean "can_destroy", default: false, null: false
+    t.boolean "can_index", default: false, null: false
+    t.boolean "can_show", default: false, null: false
+    t.boolean "can_update", default: false, null: false
+    t.datetime "created_at", null: false
+    t.string "resource", null: false
+    t.string "role", null: false
+    t.datetime "updated_at", null: false
+    t.index ["role", "resource"], name: "index_permissions_on_role_and_resource", unique: true
   end
 
   create_table "suppliers", force: :cascade do |t|
@@ -108,6 +169,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_212923) do
     t.string "subdomain", null: false
     t.datetime "updated_at", null: false
     t.index ["subdomain"], name: "index_tenants_on_subdomain", unique: true
+  end
+
+  create_table "user_equipment_requirements", force: :cascade do |t|
+    t.string "adapter_name"
+    t.bigint "assignment_id"
+    t.datetime "created_at", null: false
+    t.bigint "equipment_category_id", null: false
+    t.boolean "is_adapter", default: false, null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "requires", default: true, null: false
+    t.bigint "tenant_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["assignment_id"], name: "index_user_equipment_requirements_on_assignment_id"
+    t.index ["equipment_category_id"], name: "index_user_equipment_requirements_on_equipment_category_id"
+    t.index ["tenant_id"], name: "index_user_equipment_requirements_on_tenant_id"
+    t.index ["user_id", "equipment_category_id", "is_adapter"], name: "index_uer_on_user_category_adapter"
+    t.index ["user_id"], name: "index_user_equipment_requirements_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -144,8 +223,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_212923) do
   add_foreign_key "equipment", "tenants"
   add_foreign_key "equipment_categories", "tenants"
   add_foreign_key "equipment_events", "equipment"
+  add_foreign_key "extension_ranges", "tenants"
+  add_foreign_key "extensions", "tenants"
+  add_foreign_key "extensions", "users"
   add_foreign_key "locations", "tenants"
+  add_foreign_key "onboarding_requests", "extensions"
+  add_foreign_key "onboarding_requests", "tenants"
+  add_foreign_key "onboarding_requests", "users"
   add_foreign_key "suppliers", "tenants"
+  add_foreign_key "user_equipment_requirements", "assignments"
+  add_foreign_key "user_equipment_requirements", "equipment_categories"
+  add_foreign_key "user_equipment_requirements", "tenants"
+  add_foreign_key "user_equipment_requirements", "users"
   add_foreign_key "users", "departments"
   add_foreign_key "users", "tenants"
 end

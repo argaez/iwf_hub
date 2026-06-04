@@ -1,0 +1,1 @@
+class LocationPolicy < ApplicationPolicy; end
