@@ -29,6 +29,8 @@ gem "avo"
 
 # Soft delete (del proyecto de tu compañero)
 gem "discard"
+gem "prawn"
+gem "prawn-table" 
 
 # Background jobs
 gem "solid_queue"
