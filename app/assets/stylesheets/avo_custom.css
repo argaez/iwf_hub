@@ -1,0 +1,177 @@
+/* ── Fuente ─────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* ── Utilidades globales ─────────────────────────────────────────────────── */
+.border-gray-150 { display: none !important; }
+a[href*="attach_modal"] { display: none !important; }
+select:disabled { opacity: 0.45; cursor: not-allowed; background-color: #f3f4f6; }
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+.avo-sidebar {
+  background-color: #15385E !important;
+  width: 256px !important;
+  min-width: 256px !important;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.45) !important;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Links directos del sidebar */
+.avo-sidebar a.iwf-dashboard-link {
+  color: rgba(255,255,255,0.78) !important;
+  padding: 9px 12px 9px 16px !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 24px !important;
+  border-left: 3px solid transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  margin: 1px 6px 2px !important;
+  border-radius: 6px !important;
+  transition: background-color 0.12s ease, color 0.12s ease !important;
+  font-family: 'Roboto', sans-serif !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.avo-sidebar a.iwf-dashboard-link:hover {
+  color: white !important;
+  background-color: rgba(255,255,255,0.07) !important;
+}
+.avo-sidebar a.iwf-dashboard-link[aria-current="page"] {
+  color: white !important;
+  background-color: rgba(255,255,255,0.10) !important;
+  border-left-color: rgba(255,255,255,0.85) !important;
+  padding-left: 13px !important;
+  font-weight: 500 !important;
+}
+
+/* Headers de secciones */
+.avo-sidebar [data-controller="menu"] > div:first-child {
+  color: rgba(255,255,255,0.6) !important;
+  padding: 7px 10px 7px 14px !important;
+  margin: 1px 6px !important;
+  border-radius: 6px !important;
+  cursor: pointer;
+  transition: background-color 0.15s ease !important;
+  font-family: 'Roboto', sans-serif !important;
+}
+.avo-sidebar [data-controller="menu"] > div:first-child:hover {
+  background-color: rgba(255,255,255,0.06) !important;
+}
+.avo-sidebar [data-controller="menu"] > div:first-child span,
+.avo-sidebar [data-controller="menu"] > div:first-child div {
+  color: rgba(255,255,255,0.6) !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.07em;
+  transition: color 0.15s ease !important;
+}
+
+/* Estado activo del header */
+.avo-sidebar [data-controller="menu"].has-active > div:first-child {
+  background-color: rgba(255,255,255,0.08) !important;
+}
+.avo-sidebar [data-controller="menu"].has-active > div:first-child span,
+.avo-sidebar [data-controller="menu"].has-active > div:first-child div,
+.avo-sidebar [data-controller="menu"].has-active > div:first-child svg {
+  color: rgba(255,255,255,0.88) !important;
+}
+
+/* Estado abierto del header */
+.avo-sidebar [data-controller="menu"].is-open > div:first-child {
+  background-color: rgba(255,255,255,0.11) !important;
+}
+.avo-sidebar [data-controller="menu"].is-open > div:first-child span,
+.avo-sidebar [data-controller="menu"].is-open > div:first-child div,
+.avo-sidebar [data-controller="menu"].is-open > div:first-child svg {
+  color: rgba(255,255,255,0.95) !important;
+}
+
+.avo-sidebar [data-menu-target="svg"] {
+  display: flex;
+  align-items: center;
+}
+
+/* Items dentro de secciones */
+.avo-sidebar [data-menu-target="items"] {
+  background-color: rgba(0,0,0,0.18) !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  width: auto !important;
+}
+.avo-sidebar [data-menu-target="items"] a {
+  background: transparent !important;
+  color: rgba(255,255,255,0.78) !important;
+  border: none !important;
+  border-left: 3px solid transparent !important;
+  margin: 0 !important;
+  padding: 9px 12px 9px 14px !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 24px !important;
+  font-family: 'Roboto', sans-serif !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: background-color 0.12s ease, color 0.12s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.avo-sidebar [data-menu-target="items"] a:hover {
+  color: white !important;
+  background-color: rgba(255,255,255,0.07) !important;
+}
+.avo-sidebar [data-menu-target="items"] a[aria-current="page"] {
+  color: white !important;
+  background-color: rgba(255,255,255,0.10) !important;
+  font-weight: 500 !important;
+  border-left-color: rgba(255,255,255,0.85) !important;
+  padding-left: 11px !important;
+}
+
+/* Borde inferior del sidebar */
+.avo-sidebar .border-t {
+  border-color: rgba(255,255,255,0.12) !important;
+}
+.avo-sidebar .border-t a {
+  color: rgba(255,255,255,0.65) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  font-family: 'Roboto', sans-serif !important;
+}
+.avo-sidebar .border-t span {
+  color: rgba(255,255,255,0.65) !important;
+}
+.avo-sidebar .border-t a:hover {
+  background-color: rgba(255,255,255,0.06) !important;
+}
+
+/* ── Ocultar elementos de Avo que no usamos ──────────────────────────────── */
+[aria-label="Toggle sidebar"] { display: none !important; }
+[data-controller="per-page"] { display: none !important; }
+[data-controller="sidebar"] > div.fixed { background: white !important; }
+
+/* ── Animación lazy-load de filas ───────────────────────────────────────── */
+@keyframes iwf-row-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.iwf-row-hidden {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.iwf-row-visible {
+  animation: iwf-row-in 0.28s ease forwards;
+}
+
+/* ── Animación ripple en sidebar ────────────────────────────────────────── */
+@keyframes iwf-ripple {
+  0%   { transform: scale(0);    opacity: 0.7; }
+  15%  { transform: scale(0.75); opacity: 0.55; }
+  50%  { transform: scale(0.92); opacity: 0.3; }
+  100% { transform: scale(1);    opacity: 0; }
+}
+.iwf-ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.55);
+  pointer-events: none;
+  animation: iwf-ripple 1.1s ease-out forwards;
+  z-index: 10;
+}
