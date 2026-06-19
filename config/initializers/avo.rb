@@ -25,30 +25,4 @@ Avo.configure do |config|
 
   ## == Resource options ==
   config.click_row_to_view_record = true
-
-  ## == Menus ==
-  config.main_menu = -> {
-    section "Administración", icon: "avo/resources" do
-      resource :tenant,     label: "Empresas"
-      resource :user,       label: "Usuarios"
-      resource :department, label: "Departamentos"
-      resource :permission, label: "Permisos"
-    end
-
-    section "Inventario", icon: "avo/resources" do
-      resource :equipment,          label: "Equipos"
-      resource :equipment_category, label: "Categorías"
-      resource :assignment,         label: "Asignaciones"
-      resource :equipment_event,    label: "Eventos"
-      resource :location,           label: "Ubicaciones"
-      resource :supplier,           label: "Proveedores"
-    end
-
-    section "Onboarding", icon: "avo/resources" do
-      resource :onboarding_request,         label: "Solicitudes"
-      resource :extension,                  label: "Extensiones"
-      resource :extension_range,            label: "Rangos"
-      resource :user_equipment_requirement, label: "Requisitos"
-    end
-  }
 end
