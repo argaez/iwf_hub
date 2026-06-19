@@ -9,8 +9,8 @@ class Equipment < ApplicationRecord
 
   validates :brand, presence: true
   validates :status, presence: true
-  validates :asset_tag, uniqueness: true, allow_blank: true
-  validates :serial_number, uniqueness: true, allow_blank: true
+  validates :asset_tag, uniqueness: { scope: :tenant_id, message: "ya existe para esta empresa" }, allow_blank: true
+  validates :serial_number, uniqueness: { scope: :tenant_id, message: "ya existe para esta empresa" }, allow_blank: true
 
   enum :status, {
     available: "available",

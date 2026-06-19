@@ -35,7 +35,7 @@ module Avo
         notes:                     ob_params[:notes]
       )
 
-      ActsAsTenant.without_tenant do
+      ActsAsTenant.with_tenant(@record.tenant) do
         if onboarding.save
           begin
             pdf_content = OnboardingPdfGenerator.new(onboarding).generate
@@ -44,10 +44,12 @@ module Avo
               filename:     "onboarding_#{@record.full_name.parameterize}_#{Date.today}.pdf",
               content_type: "application/pdf"
             )
-            OnboardingMailer.onboarding_email(onboarding, pdf_content).deliver_now
+            OnboardingMailer.onboarding_email(onboarding, pdf_content).deliver_later
           rescue => e
-            Rails.logger.error "[Onboarding] PDF/email failed: #{e.class} — #{e.message}"
+            Rails.logger.error "[Onboarding] PDF/email failed: #{e.class} — #{e.message}\n#{e.backtrace.first(5).join("\n")}"
           end
+        else
+            Rails.logger.error "[Onboarding] Save failed for user #{@record.id}: #{onboarding.errors.full_messages.inspect}"
         end
       end
 
