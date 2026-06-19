@@ -24,7 +24,7 @@ gem "pundit"
 gem "jsonapi-serializer"
 
 # Paginación
-gem "pagy", "~> 8.6"
+gem "pagy", "~> 9.4"
 gem "avo"
 
 # Soft delete (del proyecto de tu compañero)
