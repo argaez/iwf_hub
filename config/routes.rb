@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   # Rutas de sesión para Avo (panel admin)
+  root to: "hub#index"
 devise_for :users,
   path: "admin",
   path_names: {

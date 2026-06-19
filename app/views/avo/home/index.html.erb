@@ -1,0 +1,176 @@
+<%
+  def cat_stats(name)
+    cat = EquipmentCategory.find_by(name: name)
+    return { available: 0, assigned: 0, total: 0, pct: 0 } unless cat
+    total     = Equipment.where(equipment_category_id: cat.id).count
+    assigned  = Equipment.where(equipment_category_id: cat.id, status: 'assigned').count
+    available = Equipment.where(equipment_category_id: cat.id, status: 'available').count
+    pct = total > 0 ? (assigned.to_f / total * 100).round : 0
+    { available: available, assigned: assigned, total: total, pct: pct }
+  end
+
+  all_stats     = { available: Equipment.where(status: 'available').count,
+                    assigned:  Equipment.where(status: 'assigned').count,
+                    total:     Equipment.count,
+                    pct:       Equipment.count > 0 ? (Equipment.where(status: 'assigned').count.to_f / Equipment.count * 100).round : 0 }
+  diadema_stats = cat_stats('Diadema')
+  mouse_stats   = cat_stats('Mouse')
+  teclado_stats = cat_stats('Teclado')
+
+  total_reqs    = UserEquipmentRequirement.count
+  complete_reqs = UserEquipmentRequirement.where(requires: false).count +
+                  UserEquipmentRequirement.where(requires: true).where.not(assignment_id: nil).count
+  pct_circle    = total_reqs > 0 ? (complete_reqs.to_f / total_reqs * 100).round : 0
+  circle_color  = pct_circle == 100 ? '#10B981' : pct_circle >= 60 ? '#F59E0B' : '#EF4444'
+
+  empleados_activos = User.kept.count
+  total_usuarios     = User.kept.count
+  usuarios_con_reqs = UserEquipmentRequirement.where(requires: true).distinct.pluck(:user_id).count
+  pct_requieren     = total_usuarios > 0 ? (usuarios_con_reqs.to_f / total_usuarios * 100).round : 0
+
+  repair_period   = params[:rp] || "month"
+  purchase_period = params[:pp] || "month"
+  repair_since    = repair_period == "week" ? 1.week.ago : repair_period == "month" ? 1.month.ago : nil
+  purchase_since  = purchase_period == "week" ? 1.week.ago : purchase_period == "month" ? 1.month.ago : nil
+  repair_scope    = EquipmentEvent.where.not(cost: nil)
+  repair_scope    = repair_scope.where("event_date >= ?", repair_since) if repair_since
+  purchase_scope  = Equipment.where.not(purchase_price: nil)
+  purchase_scope  = purchase_scope.where("created_at >= ?", purchase_since) if purchase_since
+  gasto_rep  = repair_scope.sum(:cost).to_f
+  gasto_comp = purchase_scope.sum(:purchase_price).to_f
+
+  eq_cards = [
+    { label: "Equipos disponibles",  stats: all_stats,
+      icon: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
+    { label: "Diademas disponibles", stats: diadema_stats,
+      icon: "M3 18c0-4.97 4.03-9 9-9s9 4.03 9 9M7 18a1 1 0 011-1h1a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1v-2zm7 0a1 1 0 011-1h1a1 1 0 011 1v2a1 1 0 01-1 1h-1a1 1 0 01-1-1v-2z" },
+    { label: "Ratones disponibles",  stats: mouse_stats,
+      icon: "M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" },
+    { label: "Teclados disponibles", stats: teclado_stats,
+      icon: "M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" },
+  ]
+%>
+
+<div style="padding:8px 0; font-family:'Roboto',sans-serif;">
+
+  <div style="margin-bottom:20px;">
+    <h1 style="font-size:22px;font-weight:700;color:#15385E;margin:0;">Dashboard IWF Hub</h1>
+    <p style="font-size:13px;color:#9CA3AF;margin:4px 0 0;">Resumen operativo en tiempo real</p>
+  </div>
+
+  <%# Fila 1 — 4 cards equipos %>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px;">
+    <% eq_cards.each do |card| %>
+      <% s = card[:stats] %>
+      <% bar_color = s[:pct] >= 80 ? '#EF4444' : s[:pct] >= 50 ? '#F59E0B' : '#10B981' %>
+      <div style="background:white;border:1px solid #E5E7EB;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+          <span style="font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;line-height:1.4;"><%= card[:label] %></span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#15385E" stroke-width="1.8" style="flex-shrink:0;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="<%= card[:icon] %>"/>
+          </svg>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:6px;">
+          <span style="font-size:30px;font-weight:700;color:#15385E;line-height:1;"><%= s[:available] %></span>
+          <span style="font-size:12px;color:#9CA3AF;">/ <%= s[:total] %> total</span>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;color:#6B7280;"><%= s[:assigned] %> asignados</span>
+            <span style="font-size:11px;font-weight:600;color:<%= bar_color %>;"><%= s[:pct] %>%</span>
+          </div>
+          <div style="height:5px;background:#F3F4F6;border-radius:99px;overflow:hidden;">
+            <div style="width:<%= s[:pct] %>%;height:100%;background:<%= bar_color %>;border-radius:99px;"></div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Grid central: % Asignación (span 2) + Gastos %>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+
+    <%# % Asignación — span 2 filas %>
+    <div style="grid-row:span 2;background:white;border:1px solid #E5E7EB;border-radius:10px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+      <span style="font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;text-align:center;">% Asignación general</span>
+      <div style="position:relative;width:160px;height:160px;">
+        <svg viewBox="0 0 36 36" style="width:160px;height:160px;transform:rotate(-90deg);">
+          <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F3F4F6" stroke-width="2.5"/>
+          <circle cx="18" cy="18" r="15.9" fill="none"
+            stroke="<%= circle_color %>" stroke-width="2.5"
+            stroke-dasharray="<%= pct_circle %> 100"
+            stroke-linecap="round"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">
+          <span style="font-size:28px;font-weight:700;color:<%= circle_color %>;line-height:1;"><%= pct_circle %>%</span>
+          <span style="font-size:11px;color:#9CA3AF;">completado</span>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <p style="font-size:13px;color:#374151;margin:0;font-weight:500;"><%= complete_reqs %> de <%= total_reqs %> requerimientos cubiertos</p>
+      </div>
+    </div>
+
+    <%# Gasto Reparaciones %>
+    <div style="background:white;border:1px solid #E5E7EB;border-radius:10px;padding:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <p style="font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;margin:0;">Gasto en reparaciones</p>
+        <div style="display:flex;gap:4px;">
+          <% [["Semana","week"],["Mes","month"],["Total","all"]].each do |lbl,val| %>
+            <%= link_to lbl, request.params.merge(rp: val),
+                style: "font-size:11px;padding:3px 10px;border-radius:99px;text-decoration:none;font-weight:500;background:#{repair_period==val ? '#15385E' : '#F3F4F6'};color:#{repair_period==val ? 'white' : '#6B7280'};" %>
+          <% end %>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0;">
+        <div style="font-size:30px;font-weight:700;color:#EF4444;line-height:1;">$<%= number_with_delimiter(gasto_rep.round(0).to_i, delimiter: '.') %></div>
+        <p style="font-size:12px;color:#9CA3AF;margin:6px 0 0;"><%= repair_scope.count %> evento(s) · COP</p>
+      </div>
+    </div>
+
+    <%# Gasto Compras %>
+    <div style="background:white;border:1px solid #E5E7EB;border-radius:10px;padding:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <p style="font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;margin:0;">Gasto en compra de equipos</p>
+        <div style="display:flex;gap:4px;">
+          <% [["Semana","week"],["Mes","month"],["Total","all"]].each do |lbl,val| %>
+            <%= link_to lbl, request.params.merge(pp: val),
+                style: "font-size:11px;padding:3px 10px;border-radius:99px;text-decoration:none;font-weight:500;background:#{purchase_period==val ? '#15385E' : '#F3F4F6'};color:#{purchase_period==val ? 'white' : '#6B7280'};" %>
+          <% end %>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0;">
+        <div style="font-size:30px;font-weight:700;color:#15385E;line-height:1;">$<%= number_with_delimiter(gasto_comp.round(0).to_i, delimiter: '.') %></div>
+        <p style="font-size:12px;color:#9CA3AF;margin:6px 0 0;"><%= purchase_scope.count %> equipo(s) · COP</p>
+      </div>
+    </div>
+
+  </div>
+
+  <%# Fila 3 — Colaboradores + Empleados %>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;">
+
+    <%# Colaboradores que requieren herramientas %>
+    <div style="background:white;border:1px solid #E5E7EB;border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:12px;">
+      <span style="font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;">Colaboradores que requieren herramientas</span>
+      <div style="display:flex;align-items:center;gap:20px;">
+        <span style="font-size:40px;font-weight:700;color:#15385E;line-height:1;"><%= pct_requieren %>%</span>
+        <div style="flex:1;">
+          <div style="height:8px;background:#F3F4F6;border-radius:99px;overflow:hidden;margin-bottom:6px;">
+            <div style="width:<%= pct_requieren %>%;height:100%;background:#15385E;border-radius:99px;"></div>
+          </div>
+          <p style="font-size:12px;color:#9CA3AF;margin:0;"><%= usuarios_con_reqs %> de <%= total_usuarios %> colaboradores</p>
+        </div>
+      </div>
+    </div>
+
+    <%# Empleados activos %>
+    <div style="background:white;border:1px solid #E5E7EB;border-radius:10px;padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;">
+      <span style="font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;text-align:center;">Empleados activos</span>
+      <span style="font-size:48px;font-weight:700;color:#15385E;line-height:1;"><%= empleados_activos %></span>
+      <span style="font-size:12px;color:#9CA3AF;">colaboradores</span>
+    </div>
+
+  </div>
+
+</div>
