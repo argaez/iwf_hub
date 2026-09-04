@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_212928) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_04_014049) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -50,14 +50,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_212928) do
     t.decimal "purchase_price"
     t.string "serial_number"
     t.string "status"
-    t.bigint "supplier_id"
     t.bigint "tenant_id"
     t.datetime "updated_at", null: false
+    t.bigint "vendor_id"
     t.date "warranty_end"
     t.index ["equipment_category_id"], name: "index_equipment_on_equipment_category_id"
     t.index ["location_id"], name: "index_equipment_on_location_id"
-    t.index ["supplier_id"], name: "index_equipment_on_supplier_id"
     t.index ["tenant_id"], name: "index_equipment_on_tenant_id"
+    t.index ["vendor_id"], name: "index_equipment_on_vendor_id"
   end
 
   create_table "equipment_categories", force: :cascade do |t|
@@ -150,17 +150,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_212928) do
     t.index ["role", "resource"], name: "index_permissions_on_role_and_resource", unique: true
   end
 
-  create_table "suppliers", force: :cascade do |t|
-    t.string "contact_email"
-    t.string "contact_phone"
-    t.datetime "created_at", null: false
-    t.string "name"
-    t.text "notes"
-    t.bigint "tenant_id"
-    t.datetime "updated_at", null: false
-    t.index ["tenant_id"], name: "index_suppliers_on_tenant_id"
-  end
-
   create_table "tenants", force: :cascade do |t|
     t.boolean "active", default: true
     t.datetime "created_at", null: false
@@ -214,13 +203,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_212928) do
     t.index ["tenant_id"], name: "index_users_on_tenant_id"
   end
 
+  create_table "vendors", force: :cascade do |t|
+    t.string "contact_email"
+    t.string "contact_phone"
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.text "notes"
+    t.bigint "tenant_id"
+    t.datetime "updated_at", null: false
+    t.index ["tenant_id"], name: "index_vendors_on_tenant_id"
+  end
+
   add_foreign_key "assignments", "equipment"
   add_foreign_key "assignments", "users"
   add_foreign_key "departments", "tenants"
   add_foreign_key "equipment", "equipment_categories"
   add_foreign_key "equipment", "locations"
-  add_foreign_key "equipment", "suppliers"
   add_foreign_key "equipment", "tenants"
+  add_foreign_key "equipment", "vendors"
   add_foreign_key "equipment_categories", "tenants"
   add_foreign_key "equipment_events", "equipment"
   add_foreign_key "extension_ranges", "tenants"
@@ -230,11 +230,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_212928) do
   add_foreign_key "onboarding_requests", "extensions"
   add_foreign_key "onboarding_requests", "tenants"
   add_foreign_key "onboarding_requests", "users"
-  add_foreign_key "suppliers", "tenants"
   add_foreign_key "user_equipment_requirements", "assignments"
   add_foreign_key "user_equipment_requirements", "equipment_categories"
   add_foreign_key "user_equipment_requirements", "tenants"
   add_foreign_key "user_equipment_requirements", "users"
   add_foreign_key "users", "departments"
   add_foreign_key "users", "tenants"
+  add_foreign_key "vendors", "tenants"
 end

@@ -2,7 +2,7 @@ class Equipment < ApplicationRecord
   belongs_to :tenant, optional: true
   belongs_to :equipment_category
   belongs_to :location, optional: true
-  belongs_to :supplier, optional: true
+  belongs_to :vendor, optional: true
 
   has_many :assignments, dependent: :restrict_with_error
   has_many :equipment_events, dependent: :destroy
