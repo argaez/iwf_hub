@@ -1,26 +1,38 @@
 class Avo::Resources::User < Avo::BaseResource
-  # self.includes = []
-  # self.attachments = []
-  # self.search = {
-  #   query: -> { query.ransack(id_eq: q, m: "or").result(distinct: false) }
-  # }
+  self.model_class = ::User
+  self.title = :full_name
+  self.find_record_method = -> { query.with_discarded.find(id) }
 
   def fields
-    field :id, as: :id
-    field :email, as: :text
-    field :name, as: :text
-    field :role, as: :select, enum: ::User.roles
-    field :tenant_id, as: :number
-    field :full_name, as: :text
-    field :document_number, as: :text
-    field :phone, as: :text
-    field :position, as: :text
-    field :hire_date, as: :date
-    field :termination_date, as: :date
-    field :discarded_at, as: :date_time
-    field :department_id, as: :number
-    field :tenant, as: :belongs_to
-    field :department, as: :belongs_to
-    field :assignments, as: :has_many
+    field :id,              as: :id,       hide_on: :index
+    field :document_number, as: :text,     name: "Document Number"
+    field :full_name,       as: :text,     name: "Full Name"
+    field :email,           as: :text,     name: "Corporate Email"
+    field :role, as: :select, name: "Role",
+      options: {
+        "Employee"    => "employee",
+        "Consulta"    => "consulta",
+        "RRHH"        => "rrhh",
+        "Admin"       => "admin",
+        "Super Admin" => "super_admin"
+      }
+    field :password, as: :password, name: "Password",
+      hide_on: [:index, :show],
+      help: "Leave blank to keep current password"
+    field :password_confirmation, as: :password, name: "Confirm Password",
+      hide_on: [:index, :show]
+    field :personal_email,   as: :text,     name: "Personal Email"
+    field :phone,            as: :text,     name: "Phone"
+    field :position,         as: :text,     name: "Position"
+    field :hire_date,        as: :date,     name: "Hire Date"
+    field :termination_date, as: :date,     name: "Contract End Date",
+      hide_on: [:index, :show],
+      help: "Leave empty if contract is indefinite"
+    field :notes,            as: :textarea, name: "Notes"
+    field :tenant,           as: :belongs_to, name: "Company",
+      visible: -> { current_user.super_admin? || current_user.admin? }
+    field :department,       as: :belongs_to, name: "Department"
+    
+    tool Avo::ResourceTools::OnboardingPanel, only_on: :new
   end
-end
+end 

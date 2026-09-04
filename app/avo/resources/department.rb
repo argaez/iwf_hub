@@ -1,15 +1,11 @@
 class Avo::Resources::Department < Avo::BaseResource
-  # self.includes = []
-  # self.attachments = []
-  # self.search = {
-  #   query: -> { query.ransack(id_eq: q, m: "or").result(distinct: false) }
-  # }
+  self.title = :name
 
   def fields
-    field :id, as: :id
-    field :name, as: :text
-    field :tenant_id, as: :number
-    field :tenant, as: :belongs_to
-    field :users, as: :has_many
+    field :id,     as: :id,         hide_on: :index
+    field :name,   as: :text,       name: "Name"
+    field :tenant, as: :belongs_to, name: "Company",
+      visible: -> { current_user.super_admin? || current_user.admin? }
+    field :users,  as: :has_many,   name: "Employees"
   end
 end

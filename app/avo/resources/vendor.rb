@@ -1,4 +1,5 @@
 class Avo::Resources::Vendor < Avo::BaseResource
+  self.title = :name
   self.model_class = ::Vendor
 
   def fields

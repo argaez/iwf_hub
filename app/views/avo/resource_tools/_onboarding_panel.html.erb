@@ -1,0 +1,206 @@
+<%
+  applications = OnboardingRequest::APPLICATIONS
+  available_equipment = ActsAsTenant.without_tenant {
+    Equipment.where(status: "available").order(:brand, :model)
+  }
+%>
+
+<div id="onboarding-toggle-btn" style="margin:16px 0 0;">
+  <button type="button"
+    onclick="document.getElementById('onboarding-panel').style.display='block'; this.style.display='none';"
+    style="background:#15385E;color:white;padding:8px 20px;border-radius:6px;border:none;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;">
+    <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;fill:none;stroke:currentColor;" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+    </svg>
+    Start Onboarding
+  </button>
+</div>
+
+<div id="onboarding-panel" style="display:none;margin-top:16px;border:2px solid #15385E;border-radius:10px;overflow:hidden;">
+  <input type="hidden" name="onboarding[enabled]" value="1">
+  <input type="hidden" name="onboarding[request_date]" value="<%= Date.today.iso8601 %>">
+
+  <div style="background:#15385E;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
+    <span style="color:white;font-weight:700;font-size:15px;">Onboarding Request</span>
+    <button type="button"
+      onclick="document.getElementById('onboarding-panel').style.display='none'; document.getElementById('onboarding-toggle-btn').style.display='block';"
+      style="background:transparent;border:none;color:rgba(255,255,255,0.7);font-size:20px;cursor:pointer;">&#x2715;</button>
+  </div>
+
+  <div style="padding:20px;background:#fafafa;">
+
+    <%# Computer Assignment %>
+    <div style="background:#15385E;color:white;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Computer Assignment</div>
+    <div style="margin-bottom:10px;">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+        <%= check_box_tag "onboarding[new_computer]", "1", false, id: "ob_new_computer",
+            onchange: "document.getElementById('ob_prev_pc').style.display=this.checked?'none':'block'",
+            style: "width:16px;height:16px;" %>
+        <span style="font-weight:600;color:#111827;">New Computer</span>
+      </label>
+    </div>
+    <div id="ob_prev_pc" style="margin-bottom:16px;">
+      <% if available_equipment.any? %>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:4px;">Select Equipment</label>
+            <%= select_tag "onboarding[pc_equipment_id]",
+              options_for_select([["— Select equipment —", ""]] + available_equipment.map { |e| ["#{e.asset_tag} — #{e.brand} #{e.model}", e.id] }),
+              id: "ob_equipment_select",
+              style: "width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;background:white;" %>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:4px;">Asset Tag</label>
+            <input type="text" id="ob_asset_tag_display" readonly
+              style="width:100%;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;background:#f3f4f6;color:#6b7280;" placeholder="Auto-filled">
+            <input type="hidden" name="onboarding[pc_asset_tag]" id="ob_asset_tag_hidden">
+            <input type="hidden" name="onboarding[pc_name_or_previous_owner]" id="ob_pc_name_hidden">
+          </div>
+        </div>
+      <% else %>
+        <div style="padding:12px;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;font-size:13px;color:#92400e;">
+          No equipment available in inventory.
+        </div>
+        <input type="hidden" name="onboarding[pc_asset_tag]" value="">
+        <input type="hidden" name="onboarding[pc_name_or_previous_owner]" value="">
+      <% end %>
+    </div>
+
+    <%# Remote Access %>
+    <div style="background:#15385E;color:white;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Remote Access</div>
+    <div style="margin-bottom:10px;">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+        <%= check_box_tag "onboarding[remote_access_needed]", "1", false, id: "ob_remote_needed",
+            onchange: "document.getElementById('ob_remote_details').style.display=this.checked?'block':'none'",
+            style: "width:16px;height:16px;" %>
+        <span style="font-weight:600;color:#111827;">Remote Access Needed</span>
+      </label>
+    </div>
+    <div id="ob_remote_details" style="display:none;padding:12px;background:#f0f4f8;border-radius:6px;margin-bottom:16px;">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;margin-bottom:10px;">
+        <%= check_box_tag "onboarding[new_remote_user]", "1", false, id: "ob_new_remote",
+            onchange: "document.getElementById('ob_prev_remote').style.display=this.checked?'none':'grid'",
+            style: "width:16px;height:16px;" %>
+        <span style="font-weight:600;color:#111827;">New Remote User</span>
+      </label>
+      <div id="ob_prev_remote" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:4px;">Remote User</label>
+          <%= text_field_tag "onboarding[previous_remote_user]", nil,
+              style: "width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;" %>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:4px;">Remote Department</label>
+          <%= text_field_tag "onboarding[remote_department]", nil,
+              style: "width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;" %>
+        </div>
+      </div>
+    </div>
+
+    <%# Applications %>
+    <div style="background:#15385E;color:white;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Local PC Applications</div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#4A7BAF;cursor:pointer;margin-bottom:8px;">
+      <input type="checkbox" id="ob_select_all_apps" style="width:15px;height:15px;"
+        onchange="document.querySelectorAll('.ob-app-check').forEach(function(c){c.checked=this.checked;},this)">
+      Select all
+    </label>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;">
+      <% applications.each do |app| %>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;background:white;padding:6px 10px;border:1px solid #e5e7eb;border-radius:6px;">
+          <%= check_box_tag "onboarding[applications][]", app, false, class: "ob-app-check", style: "width:15px;height:15px;" %>
+          <%= app %>
+        </label>
+      <% end %>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:4px;">Other</label>
+      <%= text_field_tag "onboarding[applications_other]", nil,
+          placeholder: "Other applications...",
+          style: "width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;" %>
+    </div>
+
+    <%# Telephony %>
+    <div style="background:#15385E;color:white;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Telephony</div>
+    <div style="margin-bottom:12px;">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+        <%= check_box_tag "onboarding[existing_phone]", "1", false, style: "width:16px;height:16px;" %>
+        <span style="font-weight:600;color:#111827;">Existing Phone</span>
+      </label>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:4px;">Extension Number</label>
+      <select name="onboarding[extension_id]" id="ob_extension_select"
+        style="width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;background:white;">
+        <option value="">— Select company first —</option>
+      </select>
+      <p style="font-size:11px;color:#9ca3af;margin:4px 0 0;">Available extensions load after selecting the user's company.</p>
+    </div>
+
+    <%# Notes %>
+    <div style="background:#15385E;color:white;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Notes / Additional Comments</div>
+    <%= text_area_tag "onboarding[notes]", nil, rows: 3,
+        placeholder: "Additional notes...",
+        style: "width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;resize:vertical;" %>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  function loadExtensions(tenantId) {
+    var sel = document.getElementById('ob_extension_select');
+    if (!sel) return;
+    if (!tenantId) {
+      sel.innerHTML = '<option value="">— Select company first —</option>';
+      return;
+    }
+    sel.innerHTML = '<option value="">Loading...</option>';
+    fetch('/extension_options?tenant_id=' + tenantId, { headers: { 'Accept': 'application/json' } })
+      .then(function(r) { return r.json(); })
+      .then(function(items) {
+        if (items.length === 0) {
+          sel.innerHTML = '<option value="">No extensions available for this company</option>';
+        } else {
+          sel.innerHTML = '<option value="">— Select extension —</option>';
+          items.forEach(function(item) {
+            var opt = document.createElement('option');
+            opt.value = item.id;
+            opt.textContent = item.number;
+            sel.appendChild(opt);
+          });
+        }
+      })
+      .catch(function() { sel.innerHTML = '<option value="">Error loading extensions</option>'; });
+  }
+
+  function watchTenant() {
+    var tenantSel = document.querySelector('select[id*="tenant_id"], select[name*="tenant"]');
+    if (!tenantSel || tenantSel._obWatched) return;
+    tenantSel._obWatched = true;
+    tenantSel.addEventListener('change', function() { loadExtensions(this.value); });
+    if (tenantSel.value) loadExtensions(tenantSel.value);
+  }
+
+  function watchEquipmentSelect() {
+    var equipSel = document.getElementById('ob_equipment_select');
+    if (!equipSel || equipSel._obWatched) return;
+    equipSel._obWatched = true;
+    var equipData = <%= raw available_equipment.map { |e| { id: e.id, asset_tag: e.asset_tag, name: "#{e.brand} #{e.model}" } }.to_json %>;
+    equipSel.addEventListener('change', function() {
+      var found = equipData.find(function(e) { return e.id == equipSel.value; });
+      document.getElementById('ob_asset_tag_display').value = found ? found.asset_tag : '';
+      document.getElementById('ob_asset_tag_hidden').value  = found ? found.asset_tag : '';
+      document.getElementById('ob_pc_name_hidden').value    = found ? found.name : '';
+    });
+  }
+
+  function init() {
+    watchTenant();
+    watchEquipmentSelect();
+  }
+
+  document.addEventListener('turbo:load', init);
+  document.addEventListener('DOMContentLoaded', init);
+  setTimeout(init, 300);
+})();
+</script>
