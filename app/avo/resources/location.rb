@@ -1,15 +1,11 @@
-class Avo::Resources::Location < Avo::BaseResource
-  # self.includes = []
-  # self.attachments = []
-  # self.search = {
-  #   query: -> { query.ransack(id_eq: q, m: "or").result(distinct: false) }
-  # }
+class Avo::Resources::Location < Avo::Resources::ApplicationResource
+  self.model_class = ::Location
+  self.title = :name
 
   def fields
-    field :id, as: :id
-    field :name, as: :text
-    field :tenant_id, as: :number
-    field :tenant, as: :belongs_to
-    field :equipment, as: :has_many
+    field :id,        as: :id,         hide_on: :index
+    field :name,      as: :text,       name: "Name"
+    field :tenant, as: :belongs_to, name: "Company", visible: admin_visible
+    field :equipment, as: :has_many,   name: "Equipment in this location"
   end
 end

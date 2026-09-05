@@ -1,4 +1,4 @@
-class Avo::Resources::Assignment < Avo::BaseResource
+class Avo::Resources::Assignment < Avo::Resources::ApplicationResource
   self.model_class = ::Assignment
 
   def fields

@@ -1,4 +1,4 @@
-class Avo::Resources::Permission < Avo::BaseResource
+class Avo::Resources::Permission < Avo::Resources::ApplicationResource
   # self.includes = []
   # self.attachments = []
   # self.search = {

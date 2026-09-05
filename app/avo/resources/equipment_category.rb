@@ -1,16 +1,13 @@
-class Avo::Resources::EquipmentCategory < Avo::BaseResource
-  # self.includes = []
-  # self.attachments = []
-  # self.search = {
-  #   query: -> { query.ransack(id_eq: q, m: "or").result(distinct: false) }
-  # }
+class Avo::Resources::EquipmentCategory < Avo::Resources::ApplicationResource
+  self.model_class = ::EquipmentCategory
+  self.title = :name
 
   def fields
-    field :id, as: :id
-    field :name, as: :text
-    field :lifespan_years, as: :number
-    field :tenant_id, as: :number
-    field :tenant, as: :belongs_to
-    field :equipment, as: :has_many
+    field :id,             as: :id,         hide_on: :index
+    field :name,           as: :text,       name: "Name"
+    field :tenant, as: :belongs_to, name: "Company", visible: admin_visible
+    field :lifespan_years, as: :number,     name: "Lifespan (years)"
+    field :equipment,      as: :has_many,   name: "Equipment in this category",
+      attachable: false
   end
 end

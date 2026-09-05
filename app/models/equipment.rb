@@ -9,30 +9,31 @@ class Equipment < ApplicationRecord
 
   validates :brand, presence: true
   validates :status, presence: true
-  validates :asset_tag, uniqueness: { scope: :tenant_id, message: "ya existe para esta empresa" }, allow_blank: true
-  validates :serial_number, uniqueness: { scope: :tenant_id, message: "ya existe para esta empresa" }, allow_blank: true
+  validates :asset_tag,     uniqueness: { scope: :tenant_id, message: "already exists for this company" }, allow_blank: true
+  validates :serial_number, uniqueness: { scope: :tenant_id, message: "already exists for this company" }, allow_blank: true
 
   enum :status, {
-    available: "available",
-    assigned: "assigned",
+    available:   "available",
+    assigned:    "assigned",
     maintenance: "maintenance",
-    retired: "retired"
+    retired:     "retired"
   }
 
-  def current_user
+  def current_assignee
     assignments.where(returned_at: nil).includes(:user).first&.user
   end
-  def display_name
-  asset_info  = asset_tag.present? ? "#{asset_tag} · " : ""
-  equipo_info = [brand, model].select(&:present?).join(" ")
-  prev        = previous_owner
-  prev ? "#{asset_info}#{equipo_info} · #{prev.full_name}" : "#{asset_info}#{equipo_info} · New"
-end
 
-def previous_owner
-  prev = assignments.where.not(returned_at: nil)
-                    .order(returned_at: :desc)
-                    .first
-  prev ? User.with_discarded.find_by(id: prev.user_id) : nil
-end
+  def display_name
+    asset_info  = asset_tag.present? ? "#{asset_tag} · " : ""
+    equipo_info = [brand, model].select(&:present?).join(" ")
+    prev        = previous_owner
+    prev ? "#{asset_info}#{equipo_info} · #{prev.full_name}" : "#{asset_info}#{equipo_info} · New"
+  end
+
+  def previous_owner
+    prev = assignments.where.not(returned_at: nil)
+                      .order(returned_at: :desc)
+                      .first
+    prev ? User.with_discarded.find_by(id: prev.user_id) : nil
+  end
 end

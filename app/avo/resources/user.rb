@@ -1,4 +1,4 @@
-class Avo::Resources::User < Avo::BaseResource
+class Avo::Resources::User < Avo::Resources::ApplicationResource
   self.model_class = ::User
   self.title = :full_name
   self.find_record_method = -> { query.with_discarded.find(id) }
@@ -29,8 +29,7 @@ class Avo::Resources::User < Avo::BaseResource
       hide_on: [:index, :show],
       help: "Leave empty if contract is indefinite"
     field :notes,            as: :textarea, name: "Notes"
-    field :tenant,           as: :belongs_to, name: "Company",
-      visible: -> { current_user.super_admin? || current_user.admin? }
+    field :tenant, as: :belongs_to, name: "Company", visible: admin_visible
     field :department,       as: :belongs_to, name: "Department"
     
     tool Avo::ResourceTools::OnboardingPanel, only_on: :new

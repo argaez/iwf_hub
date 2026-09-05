@@ -1,13 +1,22 @@
 class EquipmentEvent < ApplicationRecord
   belongs_to :equipment
 
-  validates :event_type, presence: true
-  validates :event_date, presence: true
+  TIPOS = {
+    "Purchase"    => "purchase",
+    "Repair"      => "repair",
+    "Maintenance" => "maintenance",
+    "Inspection"  => "inspection",
+    "Upgrade"     => "upgrade"
+  }.freeze
 
   enum :event_type, {
+    purchase:    "purchase",
+    repair:      "repair",
     maintenance: "maintenance",
-    repair: "repair",
-    inspection: "inspection",
-    upgrade: "upgrade"
+    inspection:  "inspection",
+    upgrade:     "upgrade"
   }
+
+  validates :event_type, presence: true
+  validates :event_date, presence: true
 end
