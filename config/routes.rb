@@ -37,7 +37,10 @@ devise_for :users,
       resources :users, only: [:index, :show, :update, :destroy]
     end
   end
-
+  
+  get "equipment_options",  to: "equipment_options#index"
+  get "extension_options",  to: "extension_options#index"
   # Avo
+  
   mount_avo
 end

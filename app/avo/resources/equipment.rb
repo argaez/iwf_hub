@@ -18,12 +18,11 @@ class Avo::Resources::Equipment < Avo::BaseResource
     field :notes, as: :textarea
     field :equipment_category_id, as: :number
     field :location_id, as: :number
-    field :supplier_id, as: :number
+    field :vendor, as: :belongs_to, name: "Vendor"
     field :tenant_id, as: :number
     field :tenant, as: :belongs_to
     field :equipment_category, as: :belongs_to
     field :location, as: :belongs_to
-    field :supplier, as: :belongs_to
     field :assignments, as: :has_many
     field :equipment_events, as: :has_many
   end
