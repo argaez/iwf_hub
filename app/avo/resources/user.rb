@@ -34,4 +34,7 @@ class Avo::Resources::User < Avo::Resources::ApplicationResource
     
     tool Avo::ResourceTools::OnboardingPanel, only_on: :new
   end
+    def filters
+      filter Avo::Filters::UserStatusFilter
+    end
 end 

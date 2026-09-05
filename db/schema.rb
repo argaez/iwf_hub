@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_05_205606) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_05_222300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -76,6 +76,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_05_205606) do
     t.text "notes"
     t.date "purchase_date"
     t.decimal "purchase_price"
+    t.date "retirement_date"
+    t.string "retirement_reason"
     t.string "serial_number"
     t.string "status"
     t.bigint "tenant_id"

@@ -30,4 +30,7 @@ class Avo::Resources::Assignment < Avo::Resources::ApplicationResource
     field :expected_return_date, as: :date,      name: "Expected Return Date"
     field :notes,                as: :textarea,  name: "Notes"
   end
+    def filters
+      filter Avo::Filters::AssignmentNameFilter
+    end
 end

@@ -47,4 +47,14 @@ class Avo::Resources::Equipment < Avo::Resources::ApplicationResource
     field :assignments,       as: :has_many,   name: "Assignment History"
     field :equipment_events,  as: :has_many,   name: "Equipment Events"
   end
+    def filters
+      filter Avo::Filters::EquipmentStatusFilter
+      filter Avo::Filters::EquipmentCategoryFilter
+      filter Avo::Filters::EquipmentAssetTagFilter
+      filter Avo::Filters::EquipmentUserFilter
+    end
+
+    def actions
+      action Avo::Actions::RetireEquipment
+    end
 end

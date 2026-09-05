@@ -22,4 +22,8 @@ class Avo::Resources::Extension < Avo::Resources::ApplicationResource
       }
     field :notes, as: :text, name: "Notes"
   end
+    def filters
+      filter Avo::Filters::ExtensionStatusFilter
+      filter Avo::Filters::ExtensionTenantFilter
+    end
 end
