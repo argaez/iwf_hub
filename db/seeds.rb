@@ -96,40 +96,41 @@ end
 # ── Permisos por defecto ──────────────────────────────────────────────────────
 defaults = {
   "rrhh" => {
-    "Equipment"              => { index: true,  show: true,  create: true,  update: true,  destroy: false },
-    "User"                   => { index: true,  show: true,  create: true,  update: true,  destroy: false },
-    "Department"             => { index: true,  show: true,  create: true,  update: true,  destroy: false },
-    "Location"               => { index: true,  show: true,  create: true,  update: true,  destroy: false },
-    "Supplier"               => { index: true,  show: true,  create: true,  update: true,  destroy: false },
-    "EquipmentCategory"      => { index: true,  show: true,  create: true,  update: true,  destroy: false },
-    "Assignment"             => { index: true,  show: true,  create: true,  update: true,  destroy: false },
-    "EquipmentEvent"         => { index: true,  show: true,  create: true,  update: false, destroy: false },
-    "Extension"              => { index: true,  show: true,  create: true,  update: true,  destroy: false },
-    "OnboardingRequest"      => { index: true,  show: true,  create: true,  update: true,  destroy: false }
-  },
-  "consulta" => {
-    "Equipment"              => { index: true,  show: true,  create: false, update: false, destroy: false },
-    "User"                   => { index: true,  show: true,  create: false, update: false, destroy: false },
-    "Department"             => { index: true,  show: true,  create: false, update: false, destroy: false },
-    "Location"               => { index: true,  show: true,  create: false, update: false, destroy: false },
-    "Supplier"               => { index: true,  show: true,  create: false, update: false, destroy: false },
-    "EquipmentCategory"      => { index: true,  show: true,  create: false, update: false, destroy: false },
-    "Assignment"             => { index: true,  show: true,  create: false, update: false, destroy: false },
-    "EquipmentEvent"         => { index: true,  show: true,  create: false, update: false, destroy: false },
-    "Extension"              => { index: true,  show: false, create: false, update: false, destroy: false },
-    "OnboardingRequest"      => { index: true,  show: true,  create: false, update: false, destroy: false }
-  },
-  "employee" => {
-    "Equipment"              => { index: false, show: true,  create: false, update: false, destroy: false },
-    "User"                   => { index: false, show: true,  create: false, update: false, destroy: false },
-    "Department"             => { index: false, show: false, create: false, update: false, destroy: false },
-    "Location"               => { index: false, show: false, create: false, update: false, destroy: false },
-    "Supplier"               => { index: false, show: false, create: false, update: false, destroy: false },
-    "EquipmentCategory"      => { index: false, show: false, create: false, update: false, destroy: false },
-    "Assignment"             => { index: false, show: true,  create: false, update: false, destroy: false },
-    "EquipmentEvent"         => { index: false, show: false, create: false, update: false, destroy: false },
-    "Extension"              => { index: false, show: false, create: false, update: false, destroy: false },
-    "OnboardingRequest"      => { index: false, show: true,  create: false, update: false, destroy: false }
+  "Equipment"         => { index: true,  show: true,  create: true,  update: true,  destroy: false },
+  "User"              => { index: true,  show: true,  create: true,  update: true,  destroy: false },
+  "Department"        => { index: true,  show: true,  create: true,  update: true,  destroy: false },
+  "Location"          => { index: true,  show: true,  create: true,  update: true,  destroy: false },
+  "Vendor"            => { index: true,  show: true,  create: true,  update: true,  destroy: false },
+  "EquipmentCategory" => { index: true,  show: true,  create: true,  update: true,  destroy: false },
+  "Assignment"        => { index: true,  show: true,  create: true,  update: true,  destroy: false },
+  "EquipmentEvent"    => { index: true,  show: true,  create: true,  update: false, destroy: false },
+  "Extension"         => { index: true,  show: true,  create: true,  update: true,  destroy: false },
+  "OnboardingRequest" => { index: true,  show: true,  create: true,  update: true,  destroy: false }
+},
+"consulta" => {
+  "Equipment"         => { index: true,  show: true,  create: false, update: false, destroy: false },
+  "User"              => { index: true,  show: true,  create: false, update: false, destroy: false },
+  "Department"        => { index: true,  show: true,  create: false, update: false, destroy: false },
+  "Location"          => { index: true,  show: true,  create: false, update: false, destroy: false },
+  "Vendor"            => { index: true,  show: true,  create: false, update: false, destroy: false },
+  "EquipmentCategory" => { index: true,  show: true,  create: false, update: false, destroy: false },
+  "Assignment"        => { index: true,  show: true,  create: false, update: false, destroy: false },
+  "EquipmentEvent"    => { index: true,  show: true,  create: false, update: false, destroy: false },
+  "Extension"         => { index: true,  show: false, create: false, update: false, destroy: false },
+  "OnboardingRequest" => { index: true,  show: true,  create: false, update: false, destroy: false }
+},
+"employee" => {
+  "Equipment"         => { index: false, show: true,  create: false, update: false, destroy: false },
+  "User"              => { index: false, show: true,  create: false, update: false, destroy: false },
+  "Department"        => { index: false, show: false, create: false, update: false, destroy: false },
+  "Location"          => { index: false, show: false, create: false, update: false, destroy: false },
+  "Vendor"            => { index: false, show: false, create: false, update: false, destroy: false },
+  "EquipmentCategory" => { index: false, show: false, create: false, update: false, destroy: false },
+  "Assignment"        => { index: false, show: true,  create: false, update: false, destroy: false },
+  "EquipmentEvent"    => { index: false, show: false, create: false, update: false, destroy: false },
+  "Extension"         => { index: false, show: false, create: false, update: false, destroy: false },
+  "OnboardingRequest" => { index: false, show: true,  create: false, update: false, destroy: false }
+}
   }
 }
 
