@@ -1,0 +1,71 @@
+<%
+  user = @record
+  assignments = ActsAsTenant.without_tenant {
+    Assignment.where(user_id: user.id)
+              .includes(:equipment => [:equipment_category, :location])
+              .order(assigned_at: :desc)
+  }
+  active   = assignments.select { |a| a.returned_at.nil? }
+  returned = assignments.select { |a| a.returned_at.present? }
+%>
+
+<div style="margin-top:24px;">
+  <div style="background:#15385E;color:white;padding:10px 16px;border-radius:8px 8px 0 0;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">
+    Equipment Profile
+  </div>
+
+  <div style="border:1px solid #E5E7EB;border-top:none;border-radius:0 0 8px 8px;overflow:hidden;">
+
+    <%# Active assignments %>
+    <div style="padding:16px;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">
+      <p style="font-size:12px;font-weight:700;color:#15385E;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;">
+        Currently Assigned (<%= active.count %>)
+      </p>
+      <% if active.any? %>
+        <% active.each do |a| %>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:white;border:1px solid #E5E7EB;border-radius:6px;margin-bottom:8px;">
+            <div>
+              <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">
+                <%= a.equipment&.display_name || "—" %>
+              </p>
+              <p style="font-size:12px;color:#6B7280;margin:2px 0 0;">
+                <%= a.equipment&.equipment_category&.name %> ·
+                Assigned <%= a.assigned_at&.strftime("%b %d, %Y") %>
+              </p>
+            </div>
+            <span style="background:#DCFCE7;color:#166534;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;">
+              Active
+            </span>
+          </div>
+        <% end %>
+      <% else %>
+        <p style="font-size:13px;color:#9CA3AF;text-align:center;padding:12px 0;">No equipment currently assigned.</p>
+      <% end %>
+    </div>
+
+    <%# Assignment history %>
+    <div style="padding:16px;">
+      <p style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;">
+        Assignment History (<%= returned.count %>)
+      </p>
+      <% if returned.any? %>
+        <% returned.first(5).each do |a| %>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #F3F4F6;">
+            <div>
+              <p style="font-size:13px;color:#374151;margin:0;"><%= a.equipment&.display_name || "—" %></p>
+              <p style="font-size:11px;color:#9CA3AF;margin:2px 0 0;">
+                <%= a.assigned_at&.strftime("%b %d, %Y") %> → <%= a.returned_at&.strftime("%b %d, %Y") %>
+              </p>
+            </div>
+            <span style="background:#F3F4F6;color:#6B7280;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;">
+              Returned
+            </span>
+          </div>
+        <% end %>
+      <% else %>
+        <p style="font-size:13px;color:#9CA3AF;text-align:center;padding:12px 0;">No assignment history.</p>
+      <% end %>
+    </div>
+
+  </div>
+</div>

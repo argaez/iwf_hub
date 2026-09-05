@@ -33,6 +33,8 @@ class Avo::Resources::User < Avo::Resources::ApplicationResource
     field :department,       as: :belongs_to, name: "Department"
     
     tool Avo::ResourceTools::OnboardingPanel, only_on: :new
+    tool Avo::ResourceTools::EquipmentProfile,  only_on: :show
+    tool Avo::ResourceTools::OnboardingProfile, only_on: :show
   end
     def filters
       filter Avo::Filters::UserStatusFilter
